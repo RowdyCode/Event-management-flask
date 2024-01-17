@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: black;
+            color: #fff;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        h2 {
+            color: #ffffff;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="submit"],
+        button {
+            padding: 8px;
+            color: #ffffff;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"],
+        button {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 200px;
+            background-color: #333;
+        }
+
+        ol {
+            list-style: none;
+            padding: 0;
+        }
+
+        p {
+            color: #fff;
+            font-size: 19px;
+        }
+
+        li {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            color: #fff;
+        }
+
+        .sequential-number {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #007bff;
+        }
+
+        .event-details {
+            display: inline-block;
+            width: 70%;
+            vertical-align: top;
+            font-size: 26px;
+        }
+
+        .event-actions {
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+
+        .serial-number {
+            display: none;
+            color: #007bff;
+            font-size: 14px;
+            transition: .3s ease-in;
+        }
+
+        .serial-number:hover {
+            font-size: 20px;
+        }
+
+        .reveal-button {
+            background-color: #5cb85c;
+            color: #fff;
+            transition: .3s ease-out;
+        }
+
+        .reveal-button:hover {
+            font-size: 18px;
+        }
+
+        a {
+            color: #dc3545;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: .3s ease-in-out;
+        }
+
+        a:hover {
+            font-size: 18px;
+        }
+
+        .manage-button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 8px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: .3s ease-in-out;
+        }
+
+        .manage-button:hover {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Event Management System</h1>
+
+    <h2>Create Event</h2>
+    <form action="/create_event" method="post">
+        Event Name: <input type="text" name="event_name" required>
+        Event Date: <input type="date" name="event_date" required>
+        <input type="submit" value="Create Event">
+    </form>
+
+    <h2>Search Events</h2>
+    <form action="/search" method="post">
+        Search: <input type="text" name="search_term" required>
+        <input type="submit" value="Search">
+    </form>
+
+    <h2>Events</h2>
+    {% if search_term %}
+        <p>Search results for "{{ search_term }}":</p>
+    {% endif %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <span class="sequential-number">#{{ loop.index }}</span>
+                {{ event.name }} ({{ event.date }})
+                <button class="reveal-button" onclick="toggleSerialNumber('{{ event.id }}')">Reveal S.No</button>
+                <span id="reveal_{{ event.id }}" class="serial-number">{{ event.id }}</span>
+                <a href="{{ url_for('delete_event', event_id=event.id) }}">Delete</a>
+                <a href="{{ url_for('manage_event', event_id=event.id) }}" class="manage-button">Manage</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function toggleSerialNumber(eventId) {
+            var serialNumberElement = document.getElementById('reveal_' + eventId);
+            var button = event.target;
+
+            if (serialNumberElement.style.display === 'none') {
+                // Toggle visibility of the serial number
+                serialNumberElement.style.display = 'inline';
+                button.textContent = 'Hide S.No';
+            } else {
+                // Hide the serial number
+                serialNumberElement.style.display = 'none';
+                button.textContent = 'Reveal S.No';
+            }
+        }
+    </script>
+</body>
+</html>
